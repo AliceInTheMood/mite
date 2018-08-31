@@ -1,3 +1,5 @@
+# [mite] - Zunder 2018
+
 # IMPORTS
 
 from sys import platform, stdin
@@ -8,12 +10,13 @@ if platform == "esp8266":
 
 # GLOBAL VARIABLES
 
-_version = '0.0.15'
+_version = '0.0.16'
 fileName = " "
 lineBuffer = []
 lineContext = []
 gpioCheck = []
 ioLog = []
+
 
 # FUNCTIONS FOR TERMINAL STYLES AND PRESENTATION
 
@@ -129,6 +132,43 @@ def get_input():  # GET USER INPUT
         return option
 
 
+def option_handler(o7, o8, o9, o4, o5, o6, o1, o2, o3, o0, oc, od):  # GET USER OPTION
+
+    option = stdin.readline(1)
+    while True:
+
+        if option == '7':
+            o7()
+        if option == '8':
+            o8()
+        if option == '9':
+            o9()
+
+        if option == '4':
+            o4()
+        if option == '5':
+            o5()
+        if option == '6':
+            o6()
+
+        if option == '1':
+            o1()
+        if option == '2':
+            o2()
+        if option == '3':
+            o3()
+
+        if option == '0':
+            o0()
+        if option == ',':
+            oc()
+        if option == '.':
+            od()
+
+        else:
+            option = stdin.readline(1)
+            
+
 def parse_dir():  # SPLIT FILES AND DIRECTORIES
 
     dirs = []
@@ -149,6 +189,10 @@ def parse_dir():  # SPLIT FILES AND DIRECTORIES
     return result
 
 
+def none():  # EMPTY FUNCTION
+    print('[ERROR] Option not available, try again!')
+
+
 # MAIN SCREEN
 
 def main():
@@ -166,24 +210,27 @@ def main():
             "Quit", "", ""]
 
     screen(head, body, tail)
-    option = get_input()
 
-    while True:
-        if option == '0':
-            quit()
-        if option == '\n':
-            pass
-        if option == '7':
-            file_manager()
-        if option == '8':
-            code_editor("Code")
-        if option == '1':
-            io_manager()
-        else:
-            option = get_input()
+    option_handler(file_manager, code_editor, none,
+                   none, none, none,
+                   io_manager, none, none,
+                   quit, none, none)
 
 
-# FILE MANAGER
+# ###---### FILE MANAGER ###---### #
+
+def make_dir():  # MAKE DIRECTORY
+    newdir = input()
+    mkdir(newdir)
+    file_manager()
+
+
+def make_file():  # MAKE FILE
+    file = input("Choose a name for the new file: ")
+    f = open(str(file), 'w')
+    f.close()
+    file_manager()
+
 
 def file_manager():
 
@@ -195,35 +242,77 @@ def file_manager():
     body = block(getcwd() + ": ", listdir(getcwd()))
 
     tail = ["Choose /dir", "Make /dir", "",
-            "Open File", "Make File", "Remove File",
+            "", "Make File", "Remove File",
             "", "", "",
             "Return", "", ""]
 
     screen(head, body, tail)
-    option = get_input()
 
-    while True:
-        if option == '0':
-            main()
-
-        if option == '8':  # MAKE DIR
-            newdir = input()
-            mkdir(newdir)
-            file_manager()
-
-        if option == '5':  # MAKE FILE
-            file = input("Choose a name for the new file: ")
-            f = open(str(file), 'w')
-            f.close()
-            file_manager()
-
-        else:
-            option = get_input()
+    option_handler(none, make_dir, none,
+                   none, make_file, none,
+                   io_manager, none, none,
+                   main, none, none)
 
 
-# CODE EDITOR
+# ###---### CODE EDITOR ###---### #
 
-def code_editor(mode):
+searchMode = False
+
+
+def insert_line():  # INSERT LINE
+    line = input("Type your code: \n")
+    lineBuffer.append(str(line))
+    code_editor()
+
+
+def del_line():  # DELETE LINE
+    line = input("Remove Line: ")
+    del lineBuffer[int(line)]
+    code_editor()
+
+
+def edit_line():  # EDIT LINE
+    num = input("Choose a existent line to edit: ")
+    line = input("Replace Line " + str(num) + " with : \n")
+    print("")
+    try:
+        lineBuffer[int(num)] = line
+    except:
+        print("The line N°" + num + " doesn't exist!")
+    code_editor()
+
+
+def search_line():  # SEARCH LINE
+    query = input("Search in code for : ")
+    for i in range(0, len(lineBuffer)):
+        if query in lineBuffer[i]:
+            lineContext.append(str(i))
+    global searchMode
+    searchMode = True
+    code_editor()
+
+
+def join_line():  # JOIN LINE
+    num1 = input("Input an existent line: ")
+    num2 = input("Input a line to join the previous Line:  ")
+    try:
+        lineBuffer[int(num1)] = lineBuffer[int(num1)] + " " + \
+                                lineBuffer[int(num2)]
+        del lineBuffer[int(num2)]
+    except:
+        print("A line selected doesn't exist!")
+    code_editor()
+
+
+def save_code():  # SAVE FILE
+    filename = input("Name for the new file \
+               (don't forget the extension) : ")
+    f = open(filename, 'w')
+    f.writelines("\n".join(lineBuffer))
+    code_editor()
+
+
+def code_editor():
 
     head = ["Code Editor",
             "", "",
@@ -232,80 +321,33 @@ def code_editor(mode):
 
     body = []
 
-    if mode == "Code":
-        body = code(" ",lineBuffer)
-    if mode == "Search":
-        print("\033[48;5;234m" +
-              t(" The following lines of code match your query: ", 80) +
-              "\033[0m")
-        print(spacer80(" "))
+    global searchMode
+
+    if searchMode == True:
+        body = [line("The following lines of code match your query:"),
+                 spacer80(" ")]
         for i in range(0, len(lineContext)):
-            print("\033[48;5;237m" + t(" %s" % lineContext[i], 6) +
+            body.append("\033[48;5;237m" + t(" %s" % lineContext[i], 6) +
                   "\033[48;5;234m " +
                   t(lineBuffer[int(lineContext[i])], 74) +
                   "\033[0m")
+        searchMode = False
+    else:
+        body = code(" ", lineBuffer)
 
     lineContext.clear()
 
     tail = ["Insert Line", "Remove Line", "Edit Line",
             "Join Line", "", "",
             "Save", "", "Search",
-            "Return", "", ""]
+            "Return", "Reload", ""]
 
-    screen(head,body,tail)
-    option = get_input()
+    screen(head, body, tail)
 
-    while True:
-        if option == '0':  # RETURN TO MAIN SCREEN
-            main()
-
-        if option == '7':  # INSERT LINE
-            line = input("Type your code: \n")
-            lineBuffer.append(str(line))
-            code_editor("Code")
-
-        if option == '8':  # REMOVE LINE
-            line = input("Remove Line: ")
-            del lineBuffer[int(line)]
-            code_editor("Code")
-
-        if option == '9':  # EDIT LINE
-            num = input("Choose a existent line to edit: ")
-            line = input("Replace Line" + str(num) + ": ")
-            print("")
-            try:
-                lineBuffer[int(num)] = line
-            except:
-                print("The line N°" + num + " doesn't exist!")
-            code_editor("Code")
-
-        if option == '3':  # SEARCH
-            query = input("Search in code for : ")
-            for i in range(0, len(lineBuffer)):
-                if query in lineBuffer[i]:
-                    lineContext.append(str(i))
-            code_editor("Search")
-
-        if option == '4':  # JOIN LINE
-            num1 = input("Input an existent line: ")
-            num2 = input("Input a line to join the previous Line:  ")
-            try:
-                lineBuffer[int(num1)] = lineBuffer[int(num1)] + " " + \
-                                        lineBuffer[int(num2)]
-                del lineBuffer[int(num2)]
-            except:
-                print("A line selected doesn't exist!")
-            code_editor("Code")
-
-        if option == '1':  # SAVE
-            fileName = input("Name for the new file \
-                             (don't forget the extension) : ")
-            f = open(fileName, 'w')
-            f.writelines("\n".join(lineBuffer))
-            code_editor("Code")
-
-        else:
-            option = get_input()
+    option_handler(insert_line, del_line, edit_line,
+                   join_line, none, none,
+                   save_code, none, search_line,
+                   main, code_editor, none)
 
 
 def io_manager():
