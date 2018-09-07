@@ -7,13 +7,23 @@ import main
 
 # GLOBAL VARIABLES
 
-_version = "0.1.1"
+_version = "0.1.2"
 searchMode = False
 lineBuffer = []
 lineContext = []
 
 
 # FUNCTIONS
+
+def check_buffer(x):  # CHECK EXISTENCE IN LINE BUFFER
+    if x.isdigit():
+        if int(x) < len(lineBuffer):
+            return 0  # Line x exist within the buffer
+        else:
+            return 1  # Line x doesn't exist
+    else:
+        return 2  # x is a string, not a valid number
+
 
 def insert_line():  # INSERT LINE
     line = input("Type your code: \n")
@@ -38,20 +48,32 @@ def edit_line():  # EDIT LINE7
             line = input("Enter Code to append : \n")
             print("")
             lineBuffer[int(num)] += line
+
         if opt == "p":
             line = input("Enter Code to prepend : \n")
             print("")
             lineBuffer[int(num)] = line + lineBuffer[int(num)]
+
+        if opt == "s":
+            word = input("Enter the portion of the line to replace : \n")
+            print("")
+            line = input("Replace code with : \n")
+            lineBuffer[int(num)] = lineBuffer[int(num)].replace(word,line)
+
         if opt == "r":
             line = input("Replace line with : \n")
             print("")
             lineBuffer[int(num)] = line
-        else:
+
+        if opt not in ["a","p","s","r"]:
             print("[ERROR] Please select a valid option")
+
     if check_buffer(num) == 2:
         print("[ERROR] " + str(num) + " is not a valid number")
-    else:
+
+    if check_buffer(num) == 1:
         print("[ERROR] Line N°" + str(num) + " doesn't exist yet")
+
     code_editor()
 
 
@@ -83,16 +105,6 @@ def save_code():  # SAVE FILE
     f = open(filename, 'w')
     f.writelines("\n".join(lineBuffer))
     code_editor()
-
-
-def check_buffer(x):  # CHECK EXISTENCE IN LINE BUFFER
-    if x.isdigit():
-        if int(x) < len(lineBuffer):
-            return 0  # Line x exist within the buffer
-        else:
-            return 1  # Line x doesn't exist
-    else:
-        return 2  # x is a string, not a valid number
 
 
 def code_editor():
