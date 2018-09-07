@@ -7,7 +7,7 @@ import main
 
 # GLOBAL VARIABLES
 
-_version = "0.1.0"
+_version = "0.1.1"
 searchMode = False
 lineBuffer = []
 lineContext = []
@@ -38,6 +38,10 @@ def edit_line():  # EDIT LINE7
             line = input("Enter Code to append : \n")
             print("")
             lineBuffer[int(num)] += line
+        if opt == "p":
+            line = input("Enter Code to prepend : \n")
+            print("")
+            lineBuffer[int(num)] = line + lineBuffer[int(num)]
         if opt == "r":
             line = input("Replace line with : \n")
             print("")
