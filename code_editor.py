@@ -7,7 +7,7 @@ import main
 
 # GLOBAL VARIABLES
 
-_version = "0.1.3"
+_version = "0.1.4"
 searchMode = False
 lineBuffer = []
 lineContext = []
@@ -120,6 +120,14 @@ def save_code():  # SAVE FILE
     code_editor()
 
 
+def open_file(): # OPEN FILE
+    file = input("Name of the file to open: ")
+    global lineBuffer
+    with open(file, 'r') as f:
+        for line in f:
+            lineBuffer.append(str(line))
+    code_editor()
+
 def code_editor():
 
     head = ["Code Editor " + _version,
@@ -145,7 +153,7 @@ def code_editor():
 
     tail = ["Insert Line", "Remove Line", "Edit Line",
             "Join Line", "Copy Line", "Paste Line",
-            "Save", "", "Search",
+            "Save", "Open", "Search",
             "Return", "Reload", ""]
 
     framework.screen(head, body, tail)
@@ -158,7 +166,7 @@ def code_editor():
         copy_line,        #5
         paste_line,       #6
         save_code,        #1
-        framework.none,   #2
+        open_file,        #2
         search_line,      #3
         main.main,        #0
         code_editor,      #,
