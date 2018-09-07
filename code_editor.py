@@ -7,10 +7,11 @@ import main
 
 # GLOBAL VARIABLES
 
-_version = "0.1.2"
+_version = "0.1.3"
 searchMode = False
 lineBuffer = []
 lineContext = []
+clip = ""
 
 
 # FUNCTIONS
@@ -99,6 +100,18 @@ def join_line():  # JOIN LINE
     code_editor()
 
 
+def copy_line(): # COPY LINE
+    global clip
+    num = input("Copy line: ")
+    clip = lineBuffer[int(num)]
+    code_editor()
+
+def paste_line(): # PASTE LINE
+    global clip
+    num = input("Paste copied line: ")
+    lineBuffer[int(num)] = clip
+    code_editor()
+
 def save_code():  # SAVE FILE
     filename = input("Name for the new file \
                (don't forget the extension) : ")
@@ -109,7 +122,7 @@ def save_code():  # SAVE FILE
 
 def code_editor():
 
-    head = ["Code Editor",
+    head = ["Code Editor " + _version,
             "", "",
             "Language:", "",
             "Lines: ", "%s" % len(lineBuffer)]
@@ -131,22 +144,22 @@ def code_editor():
     lineContext.clear()
 
     tail = ["Insert Line", "Remove Line", "Edit Line",
-            "Join Line", "", "",
+            "Join Line", "Copy Line", "Paste Line",
             "Save", "", "Search",
             "Return", "Reload", ""]
 
     framework.screen(head, body, tail)
 
     framework.option_handler(
-        insert_line,
-        del_line,
-        edit_line,
-        join_line,
-        framework.none,
-        framework.none,
-        save_code,
-        framework.none,
-        search_line,
-        main.main,
-        code_editor,
-        framework.none)
+        insert_line,      #7
+        del_line,         #8
+        edit_line,        #9
+        join_line,        #4
+        copy_line,        #5
+        paste_line,       #6
+        save_code,        #1
+        framework.none,   #2
+        search_line,      #3
+        main.main,        #0
+        code_editor,      #,
+        framework.none)   #.
