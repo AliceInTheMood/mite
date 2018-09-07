@@ -2,7 +2,8 @@
 
 # IMPORTS
 
-from mite import framework, main
+import framework
+import main
 
 # GLOBAL VARIABLES
 
@@ -26,13 +27,17 @@ def del_line():  # DELETE LINE
     code_editor()
 
 
-def edit_line():  # EDIT LINE
+def edit_line():  # EDIT LINE7
     num = input("Choose a existent line number to edit: ")
     if check_buffer(num) == 0:
         print("Please Choose an Option: \n")
         print("[a] Append [p] Prepend [s] Replace specific [r] Replace all")
         opt = input("\n")
 
+        if opt == "a":
+            line = input("Enter Code to append : \n")
+            print("")
+            lineBuffer[int(num)] += line
         if opt == "r":
             line = input("Replace line with : \n")
             print("")
@@ -126,6 +131,6 @@ def code_editor():
         save_code,
         framework.none,
         search_line,
-        main,
+        main.main,
         code_editor,
         framework.none)

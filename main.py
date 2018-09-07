@@ -3,12 +3,18 @@
 # IMPORTS
 
 from sys import platform
-from mite import framework, file_manager, code_editor
+import framework
+import code_editor
+import file_manager
 
+
+# GLOBAL VARIABLES
+
+_version = "0.1.0"
 
 def main():
 
-    head = ["[mite] " + framework._version,
+    head = ["[mite] " + _version,
             "Platform:", platform,
             "", "",
             "", ""]
@@ -23,15 +29,16 @@ def main():
     framework.screen(head, body, tail)
 
     framework.option_handler(
-        file_manager,
-        code_editor,
-        framework.none,
-        framework.none,
-        framework.none,
-        framework.none,
-        framework.none,
-        framework.none,
-        framework.none,
-        quit,
-        framework.none,
-        framework.none)
+        file_manager.file_manager,            # 7
+        code_editor.code_editor,              # 8
+        framework.none,                       # 9
+        framework.none,                       # 4
+        framework.none,                       # 5
+        framework.none,                       # 6
+        framework.none,                       # 1
+        framework.none,                       # 2
+        framework.none,                       # 3
+        quit,                                 # 0
+        framework.none,                       # ,
+        framework.none)                       # .
+

@@ -3,7 +3,8 @@
 # IMPORTS
 
 from os import getcwd, listdir, mkdir
-from mite import framework, main
+import framework
+import main
 
 # GLOBAL VARIABLES
 
@@ -71,6 +72,6 @@ def file_manager():
         framework.none,
         framework.none,
         framework.none,
-        main,
+        main.main,
         framework.none,
         framework.none)
