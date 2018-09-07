@@ -6,10 +6,13 @@ from mite import framework, main
 
 # GLOBAL VARIABLES
 
+_version = "0.1.0"
 searchMode = False
 lineBuffer = []
 lineContext = []
 
+
+# FUNCTIONS
 
 def insert_line():  # INSERT LINE
     line = input("Type your code: \n")

@@ -1,10 +1,10 @@
+# ###---### MAIN ###---### #
+
 # IMPORTS
 
 from sys import platform
 from mite import framework, file_manager, code_editor
 
-
-# MAIN SCREEN
 
 def main():
 

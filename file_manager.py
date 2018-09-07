@@ -5,6 +5,10 @@
 from os import getcwd, listdir, mkdir
 from mite import framework, main
 
+# GLOBAL VARIABLES
+
+_version = "0.1.0"
+
 
 # FUNCTIONS
 
