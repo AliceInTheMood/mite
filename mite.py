@@ -10,7 +10,7 @@ if platform == "esp8266":
 
 # GLOBAL VARIABLES
 
-_version = '0.0.16'
+_version = '0.0.17'
 fileName = " "
 lineBuffer = []
 lineContext = []
@@ -272,13 +272,22 @@ def del_line():  # DELETE LINE
 
 
 def edit_line():  # EDIT LINE
-    num = input("Choose a existent line to edit: ")
-    line = input("Replace Line " + str(num) + " with : \n")
-    print("")
-    try:
-        lineBuffer[int(num)] = line
-    except:
-        print("The line N°" + num + " doesn't exist!")
+    num = input("Choose a existent line number to edit: ")
+    if check_buffer(num) == 0:
+        print("Please Choose an Option: \n")
+        print("[a] Append [p] Prepend [s] Replace specific [r] Replace all")
+        opt = input("\n")
+
+        if opt == "r":
+            line = input("Replace line with : \n")
+            print("")
+            lineBuffer[int(num)] = line
+        else:
+            print("[ERROR] Please select a valid option")
+    if check_buffer(num) == 2:
+        print("[ERROR] " + str(num) + " is not a valid number")
+    else:
+        print("[ERROR] Line N°" + str(num) + " doesn't exist yet")
     code_editor()
 
 
@@ -310,6 +319,16 @@ def save_code():  # SAVE FILE
     f = open(filename, 'w')
     f.writelines("\n".join(lineBuffer))
     code_editor()
+
+
+def check_buffer(x):  # CHECK EXISTENCE IN LINE BUFFER
+    if x.isdigit():
+        if int(x) < len(lineBuffer):
+            return 0  # Line x exist within the buffer
+        else:
+            return 1  # Line x doesn't exist
+    else:
+        return 2  # x is a string, not a valid number
 
 
 def code_editor():
