@@ -1,4 +1,4 @@
-# ###---### FRAMEWORK ###---### #
+# ###---### MITE ###---### #
 
 # IMPORTS
 
@@ -6,7 +6,7 @@ from sys import stdin
 
 # GLOBAL VARIABLES
 
-_version = '0.1.0'  # AT LAST!!!
+_version = '0.1.1'
 
 
 # FUNCTIONS FOR TERMINAL STYLES AND PRESENTATION
@@ -23,6 +23,10 @@ def screen(head, body, tail):  # PRINT THE APPLICATION SCREEN
 
     for i in body:
         buffer = buffer + i + "\n"
+
+    if len(tail) == 0:
+        print(buffer)
+        return
 
     buffer = buffer + spacer80(" ") + "\n" + \
                 ("\033[48;5;237;38;5;25;1m [7] " +
@@ -122,6 +126,9 @@ def get_input():  # GET USER INPUT
     if option != '\n':
         return option
 
+    # Notes: It will randomly work in some systems without having to press
+    #        [ENTER], it's not intended so it need another solution.
+
 
 def option_handler(o7, o8, o9, o4, o5, o6, o1, o2, o3, o0, oc, od):  # GET USER OPTION
 
@@ -158,6 +165,9 @@ def option_handler(o7, o8, o9, o4, o5, o6, o1, o2, o3, o0, oc, od):  # GET USER 
 
         else:
             option = stdin.readline(1)
+
+    # Notes: I don't think this is the most efficient/elegant form of handling
+    #        the user option, so it needs a rework.
 
 
 def none():  # EMPTY FUNCTION

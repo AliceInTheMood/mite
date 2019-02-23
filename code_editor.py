@@ -7,7 +7,7 @@ import main
 
 # GLOBAL VARIABLES
 
-_version = "0.1.4"
+_version = "0.1.6"
 searchMode = False
 lineBuffer = []
 lineContext = []
@@ -34,11 +34,20 @@ def insert_line():  # INSERT LINE
 
 def del_line():  # DELETE LINE
     line = input("Remove Line: ")
+
+    if check_buffer(line) == 2:
+        print("[ERROR] " + str(line) + " is not a valid number")
+        code_editor()
+
+    if check_buffer(line) == 1:
+        print("[ERROR] Line N°" + str(line) + " doesn't exist yet")
+        code_editor()
+
     del lineBuffer[int(line)]
     code_editor()
 
 
-def edit_line():  # EDIT LINE7
+def edit_line():  # EDIT LINE
     num = input("Choose a existent line number to edit: ")
     if check_buffer(num) == 0:
         print("Please Choose an Option: \n")
@@ -59,14 +68,14 @@ def edit_line():  # EDIT LINE7
             word = input("Enter the portion of the line to replace : \n")
             print("")
             line = input("Replace code with : \n")
-            lineBuffer[int(num)] = lineBuffer[int(num)].replace(word,line)
+            lineBuffer[int(num)] = lineBuffer[int(num)].replace(word, line)
 
         if opt == "r":
             line = input("Replace line with : \n")
             print("")
             lineBuffer[int(num)] = line
 
-        if opt not in ["a","p","s","r"]:
+        if opt not in ["a", "p", "s", "r"]:
             print("[ERROR] Please select a valid option")
 
     if check_buffer(num) == 2:
@@ -89,28 +98,54 @@ def search_line():  # SEARCH LINE
 
 
 def join_line():  # JOIN LINE
+
+    if len(lineBuffer) < 2:
+        print("[ERROR] You need 2 or more lines of code to proceed")
+        code_editor()
+
     num1 = input("Input an existent line: ")
+
+    if check_buffer(num1) == 2:
+        print("[ERROR] " + str(num1) + " is not a valid number")
+        code_editor()
+
+    if check_buffer(num1) == 1:
+        print("[ERROR] Line N°" + str(num1) + " doesn't exist yet")
+        code_editor()
+
     num2 = input("Input a line to join the previous Line:  ")
-    try:
-        lineBuffer[int(num1)] = lineBuffer[int(num1)] + " " + \
-                                lineBuffer[int(num2)]
-        del lineBuffer[int(num2)]
-    except:
-        print("A line selected doesn't exist!")
+
+    if check_buffer(num2) == 2:
+        print("[ERROR] " + str(num1) + " is not a valid number")
+        code_editor()
+
+    if check_buffer(num2) == 1:
+        print("[ERROR] Line N°" + str(num2) + " doesn't exist yet")
+        code_editor()
+
+    if num2 == num1:
+        print("[ERROR] Can join the same line")
+        code_editor()
+
+    lineBuffer[int(num1)] = lineBuffer[int(num1)] + " " + \
+                            lineBuffer[int(num2)]
+    del lineBuffer[int(num2)]
     code_editor()
 
 
-def copy_line(): # COPY LINE
+def copy_line():  # COPY LINE
     global clip
     num = input("Copy line: ")
     clip = lineBuffer[int(num)]
     code_editor()
 
-def paste_line(): # PASTE LINE
+
+def paste_line():  # PASTE LINE
     global clip
     num = input("Paste copied line: ")
     lineBuffer[int(num)] = clip
     code_editor()
+
 
 def save_code():  # SAVE FILE
     filename = input("Name for the new file \
@@ -120,13 +155,14 @@ def save_code():  # SAVE FILE
     code_editor()
 
 
-def open_file(): # OPEN FILE
+def open_file():  # OPEN FILE
     file = input("Name of the file to open: ")
     global lineBuffer
     with open(file, 'r') as f:
         for line in f:
             lineBuffer.append(str(line))
     code_editor()
+
 
 def code_editor():
 
@@ -159,15 +195,15 @@ def code_editor():
     framework.screen(head, body, tail)
 
     framework.option_handler(
-        insert_line,      #7
-        del_line,         #8
-        edit_line,        #9
-        join_line,        #4
-        copy_line,        #5
-        paste_line,       #6
-        save_code,        #1
-        open_file,        #2
-        search_line,      #3
-        main.main,        #0
-        code_editor,      #,
-        framework.none)   #.
+        insert_line,      # 7
+        del_line,         # 8
+        edit_line,        # 9
+        join_line,        # 4
+        copy_line,        # 5
+        paste_line,       # 6
+        save_code,        # 1
+        open_file,        # 2
+        search_line,      # 3
+        main.main,        # 0
+        code_editor,      # ,
+        framework.none)   # .
